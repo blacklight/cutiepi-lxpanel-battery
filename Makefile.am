@@ -6,5 +6,6 @@ EXTRA_DIST = \
 	intltool-update.in
 
 install-exec-hook:
-	rm -f $(DESTDIR)$(LXPANEL_LIBDIR)/plugins/*.la
-	rm -f $(DESTDIR)$(LXPANEL_LIBDIR)/plugins/*.a
+	rm -f $(LXPANEL_LIBDIR)/plugins/cutiepi_battery.la
+	rm -f $(LXPANEL_LIBDIR)/plugins/cutiepi_battery.a
+	rm -f $(LXPANEL_LIBDIR)/plugins/cutiepi_battery.so

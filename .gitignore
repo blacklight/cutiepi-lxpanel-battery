@@ -66,6 +66,8 @@ config.status
 depcomp
 install-sh
 missing
+config.h.in
+config.h.in.in
 Makefile.in
 Makefile.in.in
 Makefile
@@ -75,4 +77,4 @@ intltool-update.in
 libtool
 .deps/
 .libs/
-
+stamp-h1

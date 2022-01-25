@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 
 module_LTLIBRARIES = cutiepi_battery.la
 
-moduledir = $(libdir)/lxpanel/plugins
+moduledir = $(libdir)
 
 cutiepi_battery_la_SOURCES = \
 	main.c
