@@ -19,59 +19,62 @@
  */
 
 #include <stdio.h>
+#include <glib.h>
 #include <lxpanel/plugin.h>
 
-#define LabelSize 32
+#include "dbus.h"
+
+#define    POLL_INTERVAL_MS    1000
+
+static gboolean refresh_state(void* data)
+{
+    GtkWidget* label = (GtkWidget *) data;
+    BatteryInfo info;
+    char label_str[32] = {0};
+
+    get_battery_info(&info);
+    snprintf(
+        label_str,
+        sizeof(label_str)-1,
+        "%s %d%%",
+        info.is_charging ? "⚡" : "🔋",
+        info.level
+    );
+
+    gtk_label_set_text(GTK_LABEL(label), label_str);
+    return TRUE;
+}
 
 GtkWidget *constructor(LXPanel *panel, config_setting_t *settings)
 {
     /* panel is a pointer to the panel and
-        settings is a pointer to the configuration data
-        since we don't use it, we'll make sure it doesn't
-        give us an error at compilation time */
+       settings is a pointer to the configuration data
+       since we don't use it, we'll make sure it doesn't
+       give us an error at compilation time */
     (void)panel;
     (void)settings;
 
-    // make a label out of the hostname
-    char cIdBuf[LabelSize + 1] = {'\0'};
-    FILE *fp;
-    fp = fopen("/etc/hostname", "r");
-    fgets(cIdBuf, LabelSize, fp);
-    fclose(fp);
-
-    // create a label widget instance
-    GtkWidget *pLabel = gtk_label_new(cIdBuf);
-
-    // set the label to be visible
-    gtk_widget_show(pLabel);
-
-    // need to create a container to be able to set a border
+    dbus_init();
     GtkWidget *p = gtk_event_box_new();
-
-    // our widget doesn't have a window...
-    // it is usually illegal to call gtk_widget_set_has_window() from application but for GtkEventBox it doesn't hurt
     gtk_widget_set_has_window(p, FALSE);
-
-    // set border width
     gtk_container_set_border_width(GTK_CONTAINER(p), 1);
 
-    // add the label to the container
-    gtk_container_add(GTK_CONTAINER(p), pLabel);
+    GtkWidget *label = gtk_label_new("");
+    gtk_container_add(GTK_CONTAINER(p), label);
+    gtk_widget_show(label);
+
+    g_timeout_add(POLL_INTERVAL_MS, refresh_state, label);
 
     // set the size we want
     // gtk_widget_set_size_request(p, 100, 25);
 
-    // success!!!
     return p;
 }
 
 FM_DEFINE_MODULE(lxpanel_gtk, test)
 
-/* Plugin descriptor. */
 LXPanelPluginInit fm_module_init_lxpanel_gtk = {
-    .name = "CutiePi battery",
-    .description = "Displays the current state of the CutiePi battery",
-    .one_per_system = 1,
-
-    // assigning our functions to provided pointers.
-    .new_instance = constructor};
+   .name = "CutiePi battery",
+   .description = "Displays the current state of the CutiePi battery",
+   .new_instance = constructor
+};

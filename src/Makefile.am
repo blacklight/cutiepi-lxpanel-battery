@@ -10,7 +10,8 @@ module_LTLIBRARIES = cutiepi_battery.la
 moduledir = $(libdir)
 
 cutiepi_battery_la_SOURCES = \
-	main.c
+	main.c \
+	dbus.c
 
 cutiepi_battery_la_LIBADD = \
 	$(PACKAGE_LIBS)

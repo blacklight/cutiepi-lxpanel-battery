@@ -12,6 +12,7 @@ AC_CONFIG_HEADERS([config.h.in])
 pkg_modules="glib-2.0 >= 2.6.0 \
              gtk+-2.0 >= 2.6.0 \
              gthread-2.0 \
+             dbus-glib-1 \
              lxpanel"
 
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
